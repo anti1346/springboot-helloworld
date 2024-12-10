@@ -18,12 +18,17 @@ echo "Navigated to instance directory: ${INSTANCE_PATH}"
 # 애플리케이션 프로세스 확인
 APP_PID=$(ps -ef | grep "[j]ava.*--server.port=${INSTANCE_PORT}" | awk '{print $2}')
 
-# 프로세스 종료 & 프로세스 ID 출력
-echo "No application is running on port ${INSTANCE_PORT}."
-echo "Logs available at: ${INSTANCE_PATH}/${LOG_FILE}"
+# 프로세스 확인 및 종료
+if [[ -z "${APP_PID}" ]]; then
+    echo "No application is running on port ${INSTANCE_PORT}."
+    echo "Logs available at: ${INSTANCE_PATH}/${LOG_FILE}"
+    exit 0
+fi
+
 echo "Stopping application with PID: ${APP_PID}..."
 kill "${APP_PID}"
 
+# 종료 상태 확인
 if [[ $? -eq 0 ]]; then
     echo "Application stopped successfully."
 else
